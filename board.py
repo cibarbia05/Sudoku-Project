@@ -1,5 +1,7 @@
 import pygame
 
+import sudoku_generator
+from constants import *
 from cell import Cell
 
 
@@ -7,7 +9,6 @@ from cell import Cell
 
 
 class Board(Cell):
-
     """
             Constructor for the Board class.
             screen is a window from PyGame.
@@ -19,6 +20,13 @@ class Board(Cell):
         self.height = height
         self.screen = screen
         self.difficulty = difficulty
+        if difficulty == 1:
+            self.board = sudoku_generator.generate_sudoku(9,30)
+        elif difficulty == 2:
+            self.board = sudoku_generator.generate_sudoku(9, 40)
+        elif difficulty == 3:
+            self.board == sudoku_generator.generate_sudoku(9, 50)
+        self.cells = [[Cell(self.board[row][col],row, col, self.screen) for row in range(9)] * 9 for col in range(9)]
 
     """
             Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
@@ -27,13 +35,18 @@ class Board(Cell):
 
     def draw(self):
         screen.fill((173, 216, 230))
-        for i in range(1, 9):
+        for i in range(0, 10):
             if i % 3 == 0:
-                pygame.draw.line(self.screen, (0, 0, 0), (0, i * self.width / 9), (self.width, i * self.width / 9), 8)
-                pygame.draw.line(self.screen, (0, 0, 0), (i * self.height / 9, 0), (i * self.height / 9, self.height), 8)
+                pygame.draw.line(self.screen, (0, 0, 0), (0, i * 100), (900, i * 100), 8)
+                pygame.draw.line(self.screen, (0, 0, 0), (i * 100, 0), (i * 100, 900),8)
             else:
-                pygame.draw.line(self.screen, (0, 0, 0), (0, i * self.width / 9), (self.width, i * self.width / 9), 2)
-                pygame.draw.line(self.screen, (0, 0, 0), (i * self.height / 9, 0), (i * self.height / 9, self.height),2)
+                pygame.draw.line(self.screen, (0, 0, 0), (0, i * 100), (900, i * 100), 2)
+                pygame.draw.line(self.screen, (0, 0, 0), (i * 100, 0), (i * 100, 900),2)
+
+        for row_cells in self.cells:
+            for cell in row_cells:
+                cell.draw()
+
 
     """
         Marks the cell at (row, col) in the board as the current selected cell.
@@ -41,13 +54,8 @@ class Board(Cell):
         """
 
     def select(self, row, col):
-        current_cell =
-        chip_font = pygame.font.Font("freesansbold.ttf", 52)
-        chip_x_surf = chip_font.render("x", 0, (255,255,0))
-        chip_x_rect = chip_x_surf.get_rect(center=(450,300))
-        self.screen.blit(chip_x_surf,chip_x_rect)
-
-        pass
+        current_cell = self.board[row][col]
+        return current_cell
 
     def click(self, x, y):
         if 0 < x < self.width and 0 < y < self.width:
@@ -61,6 +69,7 @@ class Board(Cell):
         """
 
     def clear(self):
+        pass
         """
         Clears the value cell. Note that the user can only remove the cell values and sketched value that are
         filled by themselves.
@@ -80,11 +89,19 @@ class Board(Cell):
         """
 
     def reset_to_original(self):
+        for row_cells in self.cells:
+            for cell in row_cells:
+                cell.set_cell_value()
         """
         Reset all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).
         """
 
     def is_full(self):
+        for row_cells in self.cells:
+            for cell in row_cells:
+                if cell.value == 0:
+                    return False
+        return True
         """
         Returns a Boolean value indicating whether the board is full or not.
         """
@@ -95,6 +112,11 @@ class Board(Cell):
         """
 
     def find_empty(self):
+        for row_index,row_cells in enumerate(self.cells):
+            for col_index,cell in enumerate(row_cells):
+                if cell.value == 0:
+                    return (row_index,col_index)
+        return -1
         """
         Finds an empty cell and returns its row and col as a tuple (x, y).
         """
@@ -108,14 +130,17 @@ class Board(Cell):
 if __name__ == "__main__":
     pygame.init()
     width = 900
+    height = 1000
     height = 900
     screen = pygame.display.set_mode((width, height))
-    board = Board(width, height, screen, "easy")
+    board = Board(width, height, screen, 1)
+    print(board.find_empty())
     pygame.display.set_caption("Sudoku")
-    print(board.click(600, 300))
     while True:
         board.draw()
-        board.select(9,9)
+        board.select(0, 0)
+        board.select(0,3)
+        board.click(150,150)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()

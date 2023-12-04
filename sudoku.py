@@ -1,4 +1,7 @@
 import sudoku_generator
+from board import Board
+import pygame
+from constants  import *
 """
 This file will contain code to create the different screens
 of the project (game start, game over, and game in progress),
