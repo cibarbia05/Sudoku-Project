@@ -9,9 +9,6 @@ class Cell:
         Constructor for the Cell class
         """
         self.value = value
-        self.row = row
-        self.col = col
-        self.screen = screen
         self.sketched_value = 0
         self.row = row
         self.col = col
