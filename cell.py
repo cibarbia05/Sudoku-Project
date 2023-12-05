@@ -36,7 +36,7 @@ class Cell:
         """
         if self.selected:  # outlines the cell red when selected
             pygame.draw.rect(self.screen, RED, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
-                                                           SQUARE_SIZE, SQUARE_SIZE), 1)
+                                                           SQUARE_SIZE, SQUARE_SIZE), 3)
 
         if self.value == 0 and self.sketched_value != 0:
             pygame.draw.rect(self.screen, BLUE,
