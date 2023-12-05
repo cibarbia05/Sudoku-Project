@@ -43,7 +43,7 @@ class Cell:
                              pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 0)
             pygame.draw.rect(self.screen, BLACK,
                              pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 2)
-            chip_font = pygame.font.Font(None, 20)  # creates font for sketched value
+            chip_font = pygame.font.Font(None, 27)  # creates font for sketched value
             chip_surf = chip_font.render(str(self.sketched_value), 0, GRAY)  # defines surface with gray color
             chip_rect = chip_surf.get_rect(
                 center=(self.col * SQUARE_SIZE + 10, self.row * SQUARE_SIZE + 10))  # specifies location of upper
