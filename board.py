@@ -27,12 +27,11 @@ class Board(Cell):
             self.board = sudoku_generator.generate_sudoku(9, 40)
         elif difficulty == 3:
             self.board = sudoku_generator.generate_sudoku(9, 50)
-        self.rows = len(self.board)
-        self.cols = len(self.board[0])
+        self.rows = 9
+        self.cols = 9
         self.original_board = self.board
         self.selected = None
-        self.cells = [[Cell(self.board[row][col], row, col, self.screen) for row in range(self.rows)] * 9 for col in
-                      range(self.cols)]
+        self.cells = [[Cell(self.board[row][col], row, col, self.screen) for col in range(self.cols)] * 9 for row in range(self.rows)]
 
     """
             Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes.
@@ -43,10 +42,10 @@ class Board(Cell):
         self.screen.fill((173, 216, 230))
         for i in range(0, 10):
             if i % 3 == 0:
-                pygame.draw.line(self.screen, BLACK, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, SCREEN_HEIGHT - 60), 8)
+                pygame.draw.line(self.screen, BLACK, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, SCREEN_HEIGHT - 110), 8)
                 pygame.draw.line(self.screen, BLACK, (0, i * SQUARE_SIZE), (SCREEN_WIDTH, i * SQUARE_SIZE), 8)
             else:
-                pygame.draw.line(self.screen, BLACK, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, SCREEN_HEIGHT - 60), 2)
+                pygame.draw.line(self.screen, BLACK, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, SCREEN_HEIGHT - 110), 2)
                 pygame.draw.line(self.screen, BLACK, (0, i * SQUARE_SIZE), (SCREEN_WIDTH, i * SQUARE_SIZE), 2)
 
         for row_cells in self.cells:
@@ -112,9 +111,9 @@ class Board(Cell):
     """
 
     def reset_to_original(self):
-        for row_cells in self.cells:
-            for cell in row_cells:
-                cell.set_cell_value(self.original_board[row_cells][cell])
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.cells[i][j].set_cell_value(self.board[i][j])
 
     """
     Returns a Boolean value indicating whether the board is full or not.
@@ -132,7 +131,7 @@ class Board(Cell):
     """
 
     def update_board(self):
-        for row in range(self.row):
+        for row in range(self.rows):
             for col in range(self.cols):
                 self.board[row][col] = self.cells[row][col].value
 
@@ -162,7 +161,7 @@ class Board(Cell):
 
         # checks columns
         for col in range(self.cols):
-            column = [self.board[row][col] for row in range(self.board)]
+            column = [self.board[row][col] for row in range(len(self.board))]
             column.sort()
             if column != sudoku_numbers:
                 return False
@@ -177,20 +176,3 @@ class Board(Cell):
 
         return True
 
-
-
-if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    board = Board(SCREEN_WIDTH, SCREEN_HEIGHT,screen, 1)
-    print(board.check_board())
-    pygame.display.set_caption("Sudoku")
-    while True:
-        board.draw()
-        board.select(0, 0)
-        board.select(0, 3)
-        board.click(150, 150)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-        pygame.display.update()

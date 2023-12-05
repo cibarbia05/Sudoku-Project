@@ -36,7 +36,7 @@ class Cell:
         """
         if self.selected:  # outlines the cell red when selected
             pygame.draw.rect(self.screen, RED, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
-                                                           SQUARE_SIZE, SQUARE_SIZE), 6)
+                                                           SQUARE_SIZE, SQUARE_SIZE), 4)
 
         if self.value == 0 and self.sketched_value != 0:
             chip_font = pygame.font.Font(None, 20)  # creates font for sketched value
