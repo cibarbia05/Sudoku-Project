@@ -115,12 +115,8 @@ def sudoku_screen(difficulty):
 
     # checks for any events
     running = True
-    selected_row = 1000
-    selected_col = 1000
     while running:
-
         for event in pygame.event.get():
-
             if event.type == pygame.QUIT:
                 running = False
 
@@ -135,15 +131,14 @@ def sudoku_screen(difficulty):
                 elif exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-                else:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
-                    selected_row, selected_col = board.click(mouse_x, mouse_y)
-                    if board.select(selected_row, selected_col) == 0:
-                        board.cells[selected_row][selected_col].selected = True
-                        board.cells[selected_row][selected_col].draw()
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                selected_row, selected_col = board.click(mouse_x, mouse_y)
+                if board.select(selected_row, selected_col) == 0:
+                    board.cells[selected_row][selected_col].selected = True
+                    board.cells[selected_row][selected_col].draw()
 
-            elif event.type == pygame.KEYDOWN and selected_row != 1000:  # checks key pressed when cell selected
-                # handles arrow keys
+            # handles arrow keys
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and selected_row > 0:
                     selected_row -= 1
                     if board.cells[selected_row][selected_col].value == 0:
@@ -184,14 +179,13 @@ def sudoku_screen(difficulty):
                     board.update_board()
                     board.cells[selected_row][selected_col].draw()
 
-                    # checks if there is a winner, goes to screen that displays that the user won the game
+                    # checks if there is a winner, goes to the screen which displays that the user won the game
                     if board.is_full() and board.check_board():
                         won_game()
 
-                    # else if there isn't a winner, goes to screen that says the user did not win the game
-                    elif board.is_full() is True and board.check_board() is False:
+                    # else if there isn't a winner, goes to the screen that says the user did not win the game
+                    elif board.is_full() == True and board.check_board() == False:
                         lost_game()
-
         pygame.display.update()
 
 # screen that displays when the user wins the game
