@@ -36,7 +36,7 @@ class Cell:
         """
         if self.selected:  # outlines the cell red when selected
             pygame.draw.rect(self.screen, RED, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
-                                                           SQUARE_SIZE, SQUARE_SIZE), 2)
+                                                           SQUARE_SIZE, SQUARE_SIZE), 1)
 
         if self.value == 0 and self.sketched_value != 0:
             pygame.draw.rect(self.screen, BLUE,
@@ -66,3 +66,8 @@ class Cell:
             chip_rect = chip_surf.get_rect(center=(self.col * SQUARE_SIZE + SQUARE_SIZE // 2, self.row * SQUARE_SIZE +
                                                    SQUARE_SIZE // 2))  # specifies location
             self.screen.blit(chip_surf, chip_rect)  # draws surface
+
+    def erase(self):
+        if self.selected:  # removes the outline of the cell
+            pygame.draw.rect(self.screen, BLACK, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
+                                                           SQUARE_SIZE, SQUARE_SIZE), 1)

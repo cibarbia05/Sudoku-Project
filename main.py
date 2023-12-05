@@ -147,21 +147,25 @@ def sudoku_screen(difficulty):
             elif event.type == pygame.KEYDOWN and selected_row != 1000:  # checks key pressed when cell selected
                 # handles arrow keys
                 if event.key == pygame.K_UP and selected_row > 0:
+                    board.cells[selected_row][selected_col].erase()
                     selected_row -= 1
                     if board.cells[selected_row][selected_col].value == 0:
                         board.cells[selected_row][selected_col].selected = True
                         board.cells[selected_row][selected_col].draw()
                 elif event.key == pygame.K_DOWN and selected_row < 8:
+                    board.cells[selected_row][selected_col].erase()
                     selected_row += 1
                     if board.cells[selected_row][selected_col].value == 0:
                         board.cells[selected_row][selected_col].selected = True
                         board.cells[selected_row][selected_col].draw()
                 elif event.key == pygame.K_LEFT and selected_col > 0:
+                    board.cells[selected_row][selected_col].erase()
                     selected_col -= 1
                     if board.cells[selected_row][selected_col].value == 0:
                         board.cells[selected_row][selected_col].selected = True
                         board.cells[selected_row][selected_col].draw()
                 elif event.key == pygame.K_RIGHT and selected_col < 8:
+                    board.cells[selected_row][selected_col].erase()
                     selected_col += 1
                     if board.cells[selected_row][selected_col].value == 0:
                         board.cells[selected_row][selected_col].selected = True
