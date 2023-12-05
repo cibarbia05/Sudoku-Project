@@ -71,7 +71,8 @@ class Board(Cell):
             clicked_row = y // SQUARE_SIZE
             clicked_col = x // SQUARE_SIZE
             return (clicked_row, clicked_col)
-        return None
+        else:
+            return None
 
     """
     Clears the value cell. Note that the user can only remove the cell values and sketched value that are

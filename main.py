@@ -126,6 +126,7 @@ def sudoku_screen(difficulty):
 
             # handles mouse clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
                 if reset_button.collidepoint(event.pos):
                     board.reset_to_original()
                     board.update_board()
@@ -135,8 +136,9 @@ def sudoku_screen(difficulty):
                 elif exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
+                elif mouse_y > 550:  # checks if user clicked empty blue space where buttons are
+                    break
                 else:
-                    mouse_x, mouse_y = pygame.mouse.get_pos()
                     selected_row, selected_col = board.click(mouse_x, mouse_y)
                     if board.select(selected_row, selected_col) == 0:
                         board.cells[selected_row][selected_col].selected = True
