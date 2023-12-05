@@ -115,10 +115,12 @@ def sudoku_screen(difficulty):
 
     # checks for any events
     running = True
+    selected_row = 1000
+    selected_col = 1000
     while running:
-        selected_col = None
-        selected_row = None
+
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 running = False
 
@@ -133,64 +135,63 @@ def sudoku_screen(difficulty):
                 elif exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-                mouse_x, mouse_y = pygame.mouse.get_pos()
-                selected_row, selected_col = board.click(mouse_x, mouse_y)
-                if board.select(selected_row, selected_col) == 0:
-                    board.cells[selected_row][selected_col].selected = True
+                else:
+                    mouse_x, mouse_y = pygame.mouse.get_pos()
+                    selected_row, selected_col = board.click(mouse_x, mouse_y)
+                    if board.select(selected_row, selected_col) == 0:
+                        board.cells[selected_row][selected_col].selected = True
+                        board.cells[selected_row][selected_col].draw()
+
+            elif event.type == pygame.KEYDOWN and selected_row != 1000:  # checks key pressed when cell selected
+                # handles arrow keys
+                if event.key == pygame.K_UP and selected_row > 0:
+                    selected_row -= 1
+                    if board.cells[selected_row][selected_col].value == 0:
+                        board.cells[selected_row][selected_col].selected = True
+                        board.cells[selected_row][selected_col].draw()
+                elif event.key == pygame.K_DOWN and selected_row < 8:
+                    selected_row += 1
+                    if board.cells[selected_row][selected_col].value == 0:
+                        board.cells[selected_row][selected_col].selected = True
+                        board.cells[selected_row][selected_col].draw()
+                elif event.key == pygame.K_LEFT and selected_col > 0:
+                    selected_col -= 1
+                    if board.cells[selected_row][selected_col].value == 0:
+                        board.cells[selected_row][selected_col].selected = True
+                        board.cells[selected_row][selected_col].draw()
+                elif event.key == pygame.K_RIGHT and selected_col < 8:
+                    selected_col += 1
+                    if board.cells[selected_row][selected_col].value == 0:
+                        board.cells[selected_row][selected_col].selected = True
+                        board.cells[selected_row][selected_col].draw()
+
+                # handles numeric keys
+                elif event.unicode and event.unicode.isnumeric() and '1' <= event.unicode <= '9':
+                    integer_value = int(event.unicode)
+                    board.cells[selected_row][selected_col].set_sketched_value(integer_value)
                     board.cells[selected_row][selected_col].draw()
 
-            # handles arrow keys
-            elif event.type == pygame.KEYDOWN:
-                if selected_row is not None and selected_col is not None:  # checks that a cell was clicked
-                    if event.key == pygame.K_UP and selected_row > 0:
-                        selected_row -= 1
-                        if board.cells[selected_row][selected_col].value == 0:
-                            board.cells[selected_row][selected_col].selected = True
-                            board.cells[selected_row][selected_col].draw()
-                    elif event.key == pygame.K_DOWN and selected_row < 8:
-                        selected_row += 1
-                        if board.cells[selected_row][selected_col].value == 0:
-                            board.cells[selected_row][selected_col].selected = True
-                            board.cells[selected_row][selected_col].draw()
-                    elif event.key == pygame.K_LEFT and selected_col > 0:
-                        selected_col -= 1
-                        if board.cells[selected_row][selected_col].value == 0:
-                            board.cells[selected_row][selected_col].selected = True
-                            board.cells[selected_row][selected_col].draw()
-                    elif event.key == pygame.K_RIGHT and selected_col < 8:
-                        selected_col += 1
-                        if board.cells[selected_row][selected_col].value == 0:
-                            board.cells[selected_row][selected_col].selected = True
-                            board.cells[selected_row][selected_col].draw()
+                # handles backspace
+                elif event.key == pygame.K_BACKSPACE:
+                    board.clear(selected_row, selected_col)
+                    board.cells[selected_row][selected_col].draw()
 
-                    # handles numeric keys
-                    elif event.unicode and event.unicode.isnumeric() and '1' <= event.unicode <= '9':
-                        integer_value = int(event.unicode)
-                        board.cells[selected_row][selected_col].set_sketched_value(integer_value)
-                        board.cells[selected_row][selected_col].draw()
+                # handles enter keys
+                elif event.key == pygame.K_RETURN:
+                    board.cells[selected_row][selected_col].set_cell_value(integer_value)
+                    board.place_number(integer_value, selected_row, selected_col)
+                    board.board[selected_row][selected_col] = integer_value
+                    board.update_board()
+                    board.cells[selected_row][selected_col].draw()
 
-                    # handles backspace
-                    elif event.key == pygame.K_BACKSPACE:
-                        board.clear(selected_row, selected_col)
-                        board.cells[selected_row][selected_col].draw()
+                    # checks if there is a winner, goes to screen that displays that the user won the game
+                    if board.is_full() and board.check_board():
+                        won_game()
 
-                    # handles enter keys
-                    elif event.key == pygame.K_RETURN:
-                        board.cells[selected_row][selected_col].set_cell_value(integer_value)
-                        board.place_number(integer_value, selected_row, selected_col)
-                        board.board[selected_row][selected_col] = integer_value
-                        board.update_board()
-                        board.cells[selected_row][selected_col].draw()
+                    # else if there isn't a winner, goes to screen that says the user did not win the game
+                    elif board.is_full() is True and board.check_board() is False:
+                        lost_game()
 
-                        # checks if there is a winner, goes to the screen which displays that the user won the game
-                        if board.is_full() and board.check_board():
-                            won_game()
-
-                        # else if there isn't a winner, goes to the screen that says the user did not win the game
-                        elif board.is_full() == True and board.check_board() == False:
-                            lost_game()
-                else:
-                    pass
         pygame.display.update()
 
 # screen that displays when the user wins the game
