@@ -78,11 +78,9 @@ class Board(Cell):
     filled by themselves.
     """
 
-    def clear(self):
-        row, col = self.selected
-        if self.cells[row][col].value != self.original_board[row][col]:
-            self.cells[row][col].set_cell_value(0)
-            self.cells[row][col].set_sketched_value(0)
+    def clear(self, row , col):
+        self.cells[row][col].set_cell_value(0)
+        self.cells[row][col].set_sketched_value(0)
 
     """
     Sets the sketched value of the current selected cell equal to user entered value.
@@ -98,9 +96,8 @@ class Board(Cell):
     Called when the user presses the Enter key.
     """
 
-    def place_number(self, value):
+    def place_number(self, value, row, col):
         if self.selected:
-            row, col = self.selected
             cell = self.cells[row][col]
             if cell.value == 0:
                 cell.set_cell_value(value)
@@ -154,25 +151,29 @@ class Board(Cell):
         sudoku_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
         # checks rows
-        for row in range(self.rows):
-            self.board[row].sort()
-            if self.board[row] != sudoku_numbers:
-                return False
+        for row in self.board:
+            nums = [num for num in row]
+            nums.sort()
+            for i in range(len(nums) - 1):
+                if nums[i] == nums[i+1]:
+                    return False
 
         # checks columns
         for col in range(self.cols):
-            column = [self.board[row][col] for row in range(len(self.board))]
-            column.sort()
-            if column != sudoku_numbers:
-                return False
+            nums = [self.board[row][col] for row in range(9)]
+            nums.sort()
+            for i in range(len(nums) - 1):
+                if nums[i] == nums[i + 1]:
+                    return False
 
         # checks 3x3 grid
-        for i in range(0, self.rows, 3):
-            for j in range(0, self.cols, 3):
-                grid = [self.board[i][j] for i in range(row, row + 3) for j in range(col, col + 3)]
-                grid.sort()
-                if grid != sudoku_numbers:
-                    return False
+        for row in range(0, self.rows, 3):
+            for col in range(0, self.cols, 3):
+                nums = [self.board[i][j] for i in range(row, row + 3) for j in range(col, col + 3)]
+                nums.sort()
+                for i in range(len(nums) - 1):
+                    if nums[i] == nums[i + 1]:
+                        return False
 
         return True
 

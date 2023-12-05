@@ -4,33 +4,48 @@ of the project (game start, game over, and game in progress),
 and will form a cohesive project together with the rest of the code.
 """
 import sys
-import sudoku_generator
 from board import Board
-import pygame
 from constants import *
 
+# Initializes pygame and other variables that are used
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 screen.fill((0, 0, 0))
 difficulty = 1
-background_image_start_screen = pygame.image.load("start_screen_background.jpg")
+background = pygame.image.load("background.jpg")
 sudoku_logo = pygame.image.load("sudoku_logo.png")
-resized_suduko_logo = pygame.transform.scale(sudoku_logo, (200,200))
+trophy = pygame.image.load("trophy.png")
+easy = pygame.image.load("easy.png")
+medium = pygame.image.load("medium.png")
+hard = pygame.image.load("hard.png")
+loser = pygame.image.load("loser.png")
+resized_trophy = pygame.transform.scale(trophy, (400, 400))
+resized_suduko_logo = pygame.transform.scale(sudoku_logo, (200, 200))
+resize_easy = pygame.transform.scale(easy, (100, 100))
+resize_medium = pygame.transform.scale(medium, (100, 100))
+resize_hard = pygame.transform.scale(hard, (100, 100))
 easy_button = pygame.Rect(50, 500, BUTTON_WIDTH, BUTTON_HEIGHT)
 medium_button = pygame.Rect(225, 500, BUTTON_WIDTH, BUTTON_HEIGHT)
 hard_button = pygame.Rect(400, 500, BUTTON_WIDTH, BUTTON_HEIGHT)
 
 
+# creates the initial screen which allows the user to choose the difficulty of game
 def welcome_screen():
-    screen.blit(background_image_start_screen, (0, 0))
-    screen.blit(resized_suduko_logo, (175,125))
+
+    # adds the images and "Welcome to Sudoku!" message
+    screen.blit(background, (0, 0))
+    screen.blit(resized_suduko_logo, (175, 125))
+    screen.blit(resize_easy, (50, 400))
+    screen.blit(resize_medium, (220, 400))
+    screen.blit(resize_hard, (400, 400))
     font = pygame.font.Font("freesansbold.ttf", 52)
     text = font.render("Welcome to Sudoku!", True, WHITE)
     text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 550))
     screen.blit(text, text_rect)
 
+    # adds the "Select Game Mode: " message
     text = font.render("Select Game Mode: ", True, WHITE)
-    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25))
     screen.blit(text, text_rect)
 
     # makes the easy button
@@ -54,6 +69,7 @@ def welcome_screen():
     text_rect = text.get_rect(center=(450, 525))
     screen.blit(text, text_rect)
 
+    # checks if the buttons got selected
     running = True
     while running:
         for event in pygame.event.get():
@@ -68,8 +84,9 @@ def welcome_screen():
                     sudoku_screen(3)
         pygame.display.update()
 
+# creates the screen with the sudoku
 def sudoku_screen(difficulty):
-    board = Board(SCREEN_HEIGHT, SCREEN_WIDTH, screen, difficulty)
+    board = Board(SCREEN_HEIGHT, SCREEN_WIDTH, screen, difficulty) # creates a board object
     board.draw()
 
     # creates the reset button
@@ -96,13 +113,14 @@ def sudoku_screen(difficulty):
     text_rect = text.get_rect(center=(420, 600))
     screen.blit(text, text_rect)
 
+    # checks for any events
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-            # Handle mouse clicks
+            # handles mouse clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if reset_button.collidepoint(event.pos):
                     board.reset_to_original()
@@ -119,7 +137,7 @@ def sudoku_screen(difficulty):
                     board.cells[selected_row][selected_col].selected = True
                     board.cells[selected_row][selected_col].draw()
 
-            # Handle arrow keys
+            # handles arrow keys
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and selected_row > 0:
                     selected_row -= 1
@@ -142,34 +160,98 @@ def sudoku_screen(difficulty):
                         board.cells[selected_row][selected_col].selected = True
                         board.cells[selected_row][selected_col].draw()
 
-                # Handle numeric keys
+                # handles numeric keys
                 elif event.unicode and event.unicode.isnumeric() and '1' <= event.unicode <= '9':
                     integer_value = int(event.unicode)
                     board.cells[selected_row][selected_col].set_sketched_value(integer_value)
                     board.cells[selected_row][selected_col].draw()
 
-                # Handle enter keys
-                elif event.key == pygame.K_RETURN:
-                    board.cells[selected_row][selected_col].set_cell_value(integer_value)
-                    board.cells[selected_row][selected_col].set_sketched_value(integer_value)
-                    board.place_number(integer_value)
-                    board.board[selected_row][selected_col] = integer_value
+                # handles backspace
+                elif event.key == pygame.K_BACKSPACE:
+                    board.clear(selected_row, selected_col)
                     board.cells[selected_row][selected_col].draw()
 
-                    # checks if there is a winner
+                # handles enter keys
+                elif event.key == pygame.K_RETURN:
+                    board.cells[selected_row][selected_col].set_cell_value(integer_value)
+                    board.place_number(integer_value, selected_row, selected_col)
+                    board.board[selected_row][selected_col] = integer_value
+                    board.update_board()
+                    board.cells[selected_row][selected_col].draw()
+
+                    # checks if there is a winner, goes to the screen which displays that the user won the game
                     if board.is_full() and board.check_board():
-                        print("You win!")
+                        won_game()
+
+                    # else if there isn't a winner, goes to the screen that says the user did not win the game
                     elif board.is_full() == True and board.check_board() == False:
-                        print("You lose")
+                        lost_game()
         pygame.display.update()
 
+# screen that displays when the user wins the game
 def won_game():
-    pass
+    # adds images to the game
+    screen.blit(background, (0, 0))
+    screen.blit(resized_trophy, (75, 15))
 
+    # creates the text "Game Won!"
+    font = pygame.font.Font("freesansbold.ttf", 52)
+    text = font.render("Game Won!", True, WHITE)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 550))
+    screen.blit(text, text_rect)
+
+    # creates the exit button
+    button_font = pygame.font.Font("freesansbold.ttf", 18)
+    exit_button = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2, BUTTON_WIDTH, BUTTON_HEIGHT)
+    pygame.draw.rect(screen, GRAY, exit_button)
+    text = button_font.render("EXIT", True, WHITE)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 25))
+    screen.blit(text, text_rect)
+
+    # checks for any events
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if exit_button.collidepoint(event.pos):
+                    sys.exit()
+        pygame.display.update()
+
+# screen that displays when the user loses the game
 def lost_game():
-    pass
 
+    # adds the images to the screen
+    screen.blit(background, (0, 0))
+    screen.blit(loser, (125, 125))
 
+    # adds the text "Game Lost :("
+    font = pygame.font.Font("freesansbold.ttf", 52)
+    text = font.render("Game Lost :(", True, WHITE)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 550))
+    screen.blit(text, text_rect)
+
+    # creates the restart button
+    button_font = pygame.font.Font("freesansbold.ttf", 18)
+    restart_button = pygame.Rect(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT // 2 + 50, BUTTON_WIDTH, BUTTON_HEIGHT)
+    pygame.draw.rect(screen, GRAY, restart_button)
+    text = button_font.render("RESTART", True, WHITE)
+    text_rect = text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 75))
+    screen.blit(text, text_rect)
+
+    # checks for any events
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if restart_button.collidepoint(event.pos):
+                    welcome_screen()
+        pygame.display.update()
+
+# the main method
 def main():
     pygame.display.set_caption("Sudoku")
     running = True
@@ -180,6 +262,6 @@ def main():
                 running = False
         pygame.display.update()
 
-
+# calls the main method
 if __name__ == '__main__':
     main()

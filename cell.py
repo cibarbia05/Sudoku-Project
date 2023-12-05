@@ -36,9 +36,13 @@ class Cell:
         """
         if self.selected:  # outlines the cell red when selected
             pygame.draw.rect(self.screen, RED, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
-                                                           SQUARE_SIZE, SQUARE_SIZE), 4)
+                                                           SQUARE_SIZE, SQUARE_SIZE), 2)
 
         if self.value == 0 and self.sketched_value != 0:
+            pygame.draw.rect(self.screen, BLUE,
+                             pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 0)
+            pygame.draw.rect(self.screen, BLACK,
+                             pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 2)
             chip_font = pygame.font.Font(None, 20)  # creates font for sketched value
             chip_surf = chip_font.render(str(self.sketched_value), 0, GRAY)  # defines surface with gray color
             chip_rect = chip_surf.get_rect(
@@ -54,8 +58,11 @@ class Cell:
             self.screen.blit(chip_surf, chip_rect)  # draws surface
 
         elif self.value != 0 and self.sketched_value != 0:
+            pygame.draw.rect(self.screen, BLUE,
+                             pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE), 0)
+            pygame.draw.rect(self.screen, BLACK, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,SQUARE_SIZE, SQUARE_SIZE ), 2)
             chip_font = pygame.font.Font(None, 52)  # creates font for value
-            chip_surf = chip_font.render(str(self.value), 0, BLACK)  # defines surface with black color
+            chip_surf = chip_font.render(str(self.value), 0, GRAY)  # defines surface with black color
             chip_rect = chip_surf.get_rect(center=(self.col * SQUARE_SIZE + SQUARE_SIZE // 2, self.row * SQUARE_SIZE +
                                                    SQUARE_SIZE // 2))  # specifies location
             self.screen.blit(chip_surf, chip_rect)  # draws surface
