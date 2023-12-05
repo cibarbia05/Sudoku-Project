@@ -86,7 +86,7 @@ def welcome_screen():
 
 # creates the screen with the sudoku
 def sudoku_screen(difficulty):
-    board = Board(SCREEN_HEIGHT, SCREEN_WIDTH, screen, difficulty) # creates a board object
+    board = Board(SCREEN_WIDTH, SCREEN_HEIGHT, screen, difficulty)  # creates a board object
     board.draw()
 
     # creates the reset button
@@ -136,7 +136,7 @@ def sudoku_screen(difficulty):
                 elif exit_button.collidepoint(event.pos):
                     pygame.quit()
                     sys.exit()
-                elif mouse_y > 550:  # checks if user clicked empty blue space where buttons are
+                elif mouse_y > (SQUARE_SIZE * 9):  # checks if user clicked empty blue space where buttons are
                     break
                 else:
                     selected_row, selected_col = board.click(mouse_x, mouse_y)
