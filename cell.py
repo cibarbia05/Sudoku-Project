@@ -70,4 +70,4 @@ class Cell:
     def erase(self):
         if self.selected:  # removes the outline of the cell
             pygame.draw.rect(self.screen, BLACK, pygame.Rect(self.col * SQUARE_SIZE, self.row * SQUARE_SIZE,
-                                                           SQUARE_SIZE, SQUARE_SIZE), 1)
+                                                           SQUARE_SIZE, SQUARE_SIZE), 3)

@@ -75,7 +75,7 @@ def welcome_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if easy_button.collidepoint(event.pos):
                     sudoku_screen(1)
                 elif medium_button.collidepoint(event.pos):
